@@ -19,8 +19,8 @@ markdown_extensions:
   - toc:
       toc_depth: 3
 
-repo_url: https://github.com/pulp-platform/cheshire
-repo_name: pulp-platform/cheshire
+repo_url: https://github.com/giovannipollo/cheshire
+repo_name: giovannipollo/cheshire
 
 nav:
 - Home:
