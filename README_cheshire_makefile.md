@@ -140,9 +140,6 @@ chs-clean-deps:
 
 - This is a target named `chs-clean-deps`. Running this target will reset dependencies without updating the checked-in `Bender.lock`. It removes the `.bender` directory and deinitializes the `sw/deps/printf` Git submodule in the Cheshire project.
 
-```make
-```
-
 - At this point, the makefile is setting up and managing dependencies for the project. It ensures that essential dependencies are checked out and up to date.
 
 I'll continue with the subsequent sections in the next response to provide a line-by-line explanation of the entire code.
@@ -352,9 +349,6 @@ CHS_SIM_ALL += $(CHS_ROOT)/target/sim/vsim/compile.cheshire_soc.tcl
 ```
 
 - The code adds the downloaded simulation models and the simulation TCL script to the `CHS_SIM_ALL` variable.
-
-```make
-```
 
 - This step focuses on setting up simulation for the Cheshire SoC. It generates simulation scripts, downloads simulation models, and organizes them in the `models` directory.
 
