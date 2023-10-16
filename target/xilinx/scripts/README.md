@@ -51,6 +51,204 @@ Certainly, let's go into more detail about the various sections and commands in 
 
 Please note that this script is just a part of a larger FPGA development process. It configures the project, runs synthesis and implementation, checks for timing violations, and generates reports. The specifics of the FPGA design and the contents of the included scripts (e.g., `add_sources.tcl`) would determine the complete workflow and the behavior of this script within that context.
 
+## Details
+
+This script appears to be a Tcl script used for working with Xilinx Vivado, a tool for designing and implementing FPGA (Field-Programmable Gate Array) circuits. It is a high-level overview of the script's functionality and provides a brief explanation of each line:
+
+```tcl
+# Copyright 2018 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+#
+# Author: Florian Zaruba <zarubaf@iis.ee.ethz.ch>
+```
+
+- These lines provide copyright information, licensing information, and authorship details for the script.
+
+```tcl
+# hard-coded to Genesys 2 for the moment
+```
+
+- This comment suggests that the script is currently hard-coded to work with the Genesys 2 FPGA board.
+
+```tcl
+if {$::env(BOARD) eq "genesys2"} {
+    add_files -fileset constrs_1 -norecurse constraints/genesys2.xdc
+} elseif {$::env(BOARD) eq "kc705"} {
+    add_files -fileset constrs_1 -norecurse constraints/kc705.xdc
+} elseif {$::env(BOARD) eq "vc707"} {
+    add_files -fileset constrs_1 -norecurse constraints/vc707.xdc
+}
+```
+
+- This block of code checks the value of the `BOARD` environment variable and adds constraint files based on the board specified. For example, if the board is "genesys2," it adds the constraint file "genesys2.xdc" to the "constrs_1" fileset.
+
+```tcl
+# Ips selection
+switch $::env(BOARD) {
+    "genesys2" - "kc705" - "vc707" {
+        set ips { "xilinx/xlnx_mig_7_ddr3/xlnx_mig_7_ddr3.srcs/sources_1/ip/xlnx_mig_7_ddr3/xlnx_mig_7_ddr3.xci" \
+            "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
+            "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
+    }
+    "vcu128" {
+        set ips { "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
+            "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
+    }
+    "zcu102" {
+        set ips { "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci" \
+            "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
+            "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
+    }
+    "zcu104" {
+        set ips {
+            "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci"
+        }
+    }
+    default {
+        set ips {}
+    }
+}
+```
+
+- This code block sets the `ips` variable based on the value of the `BOARD` environment variable. It selects a list of IP (Intellectual Property) cores to be used in the design based on the specified board.
+
+```tcl
+read_ip $ips
+```
+
+- This line reads the IP cores specified in the `ips` variable into the Vivado project.
+
+```tcl
+source scripts/add_sources.tcl
+```
+
+- This line sources an external Tcl script named "add_sources.tcl."
+
+```tcl
+set_property top ${project}_top_xilinx [current_fileset]
+```
+
+- This sets the top module of the project to `${project}_top_xilinx` in the current fileset.
+
+```tcl
+update_compile_order -fileset sources_1
+```
+
+- This updates the compile order for the "sources_1" fileset.
+
+```tcl
+# add_files -fileset constrs_1 -norecurse constraints/$project.xdc
+```
+
+- This line appears to be commented out and may not be in use. It suggests adding constraint files based on a project, but it's currently disabled.
+
+```tcl
+set_property strategy Flow_PerfOptimized_high [get_runs synth_1]
+```
+
+- This sets the synthesis strategy to "Flow_PerfOptimized_high" for the "synth_1" run.
+
+```tcl
+set_property strategy Performance_ExtraTimingOpt [get_runs impl_1]
+```
+
+- This sets the implementation strategy to "Performance_ExtraTimingOpt" for the "impl_1" run.
+
+```tcl
+set_property XPM_LIBRARIES XPM_MEMORY [current_project]
+```
+
+- This sets properties related to Xilinx Platform Memory (XPM) libraries for the current project.
+
+```tcl
+synth_design -rtl -name rtl_1
+```
+
+- This command initiates the synthesis of the design with specific options.
+
+```tcl
+set_property STEPS.SYNTH_DESIGN.ARGS.RETIMING true [get_runs synth_1]
+```
+
+- This enables retiming during synthesis for the "synth_1" run.
+
+```tcl
+launch_runs synth_1
+wait_on_run synth_1
+open_run synth_1
+```
+
+- These lines launch, wait for, and open the synthesis run named "synth_1."
+
+```tcl
+exec mkdir -p reports/
+exec rm -rf reports/*
+```
+
+- These lines create a directory for reports and remove any existing files in that directory.
+
+```tcl
+check_timing -verbose -file reports/$project.check_timing.rpt
+report_timing -max_paths 100 -nworst 100 -delay_type max -sort_by slack -file reports/$project.timing_WORST_100.rpt
+report_timing -nworst 1 -delay_type max -sort_by group -file reports/$project.timing.rpt
+report_utilization -hierarchical -file reports/$project.utilization.rpt
+report_cdc -file reports/$project.cdc.rpt
+report_clock_interaction -file reports/$project.clock_interaction.rpt
+```
+
+- These lines generate various reports related to timing, utilization, clock domain crossing (CDC), and clock interaction, and save them in the "reports" directory.
+
+```tcl
+launch_runs impl_1
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+```
+
+- These lines launch, wait for, and open the implementation
+
+ run named "impl_1." The last two lines are related to generating a bitstream.
+
+```tcl
+#Check timing constraints
+open_run impl_1
+set timingrep [report_timing_summary -no_header -no_detailed_paths -return_string]
+if {[info exists ::env(CHECK_TIMING)] && $::env(CHECK_TIMING)==1} {
+  if {! [string match -nocase {*timing constraints are met*} $timingrep]} {
+    send_msg_id {USER 1-1} ERROR {Timing constraints were not met.}
+    return -code error
+  }
+}
+```
+
+- This code block checks whether timing constraints were met and provides an error message if they were not met.
+
+```tcl
+write_verilog -force -mode funcsim out/${project}_funcsim.v
+write_verilog -force -mode timesim out/${project}_timesim.v
+write_sdf -force out/${project}_timesim.sdf
+```
+
+- These lines generate Verilog netlist files and a Standard Delay Format (SDF) file for timing simulation.
+
+```tcl
+# reports
+exec mkdir -p reports/
+exec rm -rf reports/*
+```
+
+- These lines recreate the "reports" directory and remove any existing files.
+
+```tcl
+check_timing -file reports/${project}.check_timing.rpt
+report_timing -max_paths 100 -nworst 100 -delay_type max -sort_by slack -file reports/${project}.timing_WORST_100.rpt
+report_timing -nworst 1 -delay_type max -sort_by group -file reports/${project}.timing.rpt
+report_utilization -hierarchical -file reports/${project}.utilization.rpt
+```
+
+- These lines generate additional timing, utilization, and constraint-related reports in the "reports" directory.
+
 # prologue.tcl
 
 The code you provided appears to be a Tcl script written for Xilinx Vivado, a tool used for FPGA (Field-Programmable Gate Array) development. This script seems to configure various settings and parameters for a specific Vivado project. Here's a brief explanation of what the script does:
@@ -91,6 +289,65 @@ This is a Tcl (Tool Command Language) script that appears to be used for generat
 
 In summary, this script is used to automate the generation of memory configuration files for different FPGA boards based on the provided bitstream file and board type. It utilizes the `write_cfgmem` command, which is likely provided by the FPGA development environment, to perform this task. The script is specific to certain FPGA boards and their configurations.
 
+## Details
+
+This script appears to be a Tcl script designed to generate a memory configuration file from a bitstream file for specific FPGA boards (Genesys II, VC707, and KC705). Here's a line-by-line explanation:
+
+```tcl
+# Copyright 2018 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+#
+# Author: Florian Zaruba <zarubaf@iis.ee.ethz.ch>
+```
+
+- These lines provide copyright information, licensing information, and authorship details for the script.
+
+```tcl
+# Description: Generate a memory configuration file from a bitstream (Genesys II only right now)
+```
+
+- This comment briefly describes the purpose of the script.
+
+```tcl
+if {$argc < 2 || $argc > 4} {
+    puts $argc
+    puts {Error: Invalid number of arguments}
+    puts {Usage: write_cfgmem.tcl mcsfile bitfile [datafile]}
+    exit 1
+}
+```
+
+- This block checks the number of command-line arguments provided to the script (`$argc`). If the number of arguments is less than 2 or greater than 4, it displays an error message indicating the correct usage and exits the script with an error code.
+
+```tcl
+lassign $argv mcsfile bitfile
+```
+
+- This line assigns the first and second command-line arguments provided to the script (`$argv`) to the variables `mcsfile` and `bitfile`, respectively.
+
+```tcl
+if {$::env(BOARD) eq "genesys2"} {
+    write_cfgmem -format mcs -interface SPIx1 -size 256  -loadbit "up 0x0 $bitfile" -file $mcsfile -force
+} elseif {$::env(BOARD) eq "vc707"} {
+    write_cfgmem -format mcs -interface bpix16 -size 128 -loadbit "up 0x0 $bitfile" -file $mcsfile -force
+} elseif {$::env(BOARD) eq "kc705"} {
+    write_cfgmem -format mcs -interface SPIx4 -size 128  -loadbit "up 0x0 $bitfile" -file $mcsfile -force
+} else {
+    exit 1
+}
+```
+
+- This code block checks the value of the `BOARD` environment variable to determine which FPGA board is being used. Based on the board type, it calls the `write_cfgmem` command with appropriate parameters to generate a memory configuration file (MCS file) from the provided bitstream file (`$bitfile`). The options and interface types are set based on the board.
+
+   - For "genesys2," it uses SPIx1 with a size of 256 and the `up 0x0` loadbit option.
+   - For "vc707," it uses bpix16 with a size of 128 and the `up 0x0` loadbit option.
+   - For "kc705," it uses SPIx4 with a size of 128 and the `up 0x0` loadbit option.
+
+If the `BOARD` environment variable does not match any of the specified boards, the script exits with an error code.
+
+This script essentially automates the process of generating memory configuration files for different FPGA boards based on the input bitstream and board type.
+
 # program.tcl
 
 This script appears to be a TCL script for programming FPGA devices using the Xilinx Vivado Design Suite. It looks like it's meant to be used to program different FPGA boards based on the value of the `BOARD` environment variable. Let me explain the script step by step:
@@ -112,3 +369,84 @@ This script appears to be a TCL script for programming FPGA devices using the Xi
 8. If the `BOARD` is neither "genesys2" nor "vc707," it exits the script with an error code.
 
 Overall, this script is used to automate the process of programming FPGA devices on different boards based on the value of the `BOARD` environment variable, assuming that the necessary environment variables like `HOST`, `PORT`, and `BIT` have been set appropriately before running the script. It seems to be part of a larger FPGA development workflow using Xilinx Vivado.
+
+## Details
+
+This Tcl script is designed to program an FPGA board (Genesys II or VC707) using Xilinx Vivado's hardware manager. Below is a line-by-line explanation of the script:
+
+```tcl
+# Copyright 2018 ETH Zurich and University of Bologna.
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+#
+# Author: Florian Zaruba <zarubaf@iis.ee.ethz.ch>
+```
+
+- These lines provide copyright information, licensing information, and authorship details for the script.
+
+```tcl
+# Description: Program Genesys II
+```
+
+- This comment briefly describes the purpose of the script, which is to program a Genesys II FPGA board.
+
+```tcl
+open_hw_manager
+```
+
+- This command opens the hardware manager in Xilinx Vivado.
+
+```tcl
+connect_hw_server -url $::env(HOST):$::env(PORT)
+```
+
+- This command connects to the hardware server using the URL and port specified in the `HOST` and `PORT` environment variables.
+
+```tcl
+if {$::env(BOARD) eq "genesys2"} {
+  open_hw_target $::env(HOST):$::env(PORT)/$::env(FPGA_PATH)
+```
+
+- This conditional block checks if the `BOARD` environment variable is set to "genesys2." If true, it opens a hardware target based on the specified host, port, and FPGA path.
+
+```tcl
+  current_hw_device [get_hw_devices xc7k325t_0]
+  set_property PROGRAM.FILE $::env(BIT) [get_hw_devices xc7k325t_0]
+  program_hw_devices [get_hw_devices xc7k325t_0]
+  refresh_hw_device [lindex [get_hw_devices xc7k325t_0] 0]
+```
+
+- Inside the "genesys2" block, it does the following:
+   - Selects the current hardware device as "xc7k325t_0."
+   - Sets the programming file (BIT file) to the path specified in the `BIT` environment variable.
+   - Programs the hardware devices.
+   - Refreshes the hardware device.
+
+```tcl
+} elseif {$::env(BOARD) eq "vc707"} {
+  open_hw_target {$::env(HOST):$::env(PORT)/$::env(FPGA_PATH)}
+```
+
+- This conditional block checks if the `BOARD` environment variable is set to "vc707." If true, it opens a hardware target based on the specified host, port, and FPGA path.
+
+```tcl
+  current_hw_device [get_hw_devices xc7vx485t_0]
+  set_property PROGRAM.FILE $::env(BIT) [get_hw_devices xc7vx485t_0]
+  program_hw_devices [get_hw_devices xc7vx485t_0]
+  refresh_hw_device [lindex [get_hw_devices xc7vx485t_0] 0]
+```
+
+- Inside the "vc707" block, it does the following:
+   - Selects the current hardware device as "xc7vx485t_0."
+   - Sets the programming file (BIT file) to the path specified in the `BIT` environment variable.
+   - Programs the hardware devices.
+   - Refreshes the hardware device.
+
+```tcl
+} else {
+      exit 1
+```
+
+- If the `BOARD` environment variable does not match "genesys2" or "vc707," the script exits with an error code (1).
+
+This script essentially opens the hardware manager, connects to the hardware server, selects the appropriate FPGA board based on the `BOARD` environment variable, and programs the FPGA with the specified bitstream file.
