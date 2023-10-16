@@ -13,22 +13,11 @@ XILINX_PORT  ?= 3332
 XILINX_HOST  ?= bordcomputer
 FPGA_PATH    ?= xilinx_tcf/Digilent/200300A8C60DB
 
-# # ZCU102
-# BOARD          = zcu102
-# XILINX_PART    = xczu9eg-ffvb1156-2-e
-# XILINX_BOARD   = xilinx.com:zcu102:part0:3.4
-# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
-
-# # ZCU104
-BOARD          = zcu104
-XILINX_PART  = xczu7ev-ffvc1156-2-e
-XILINX_BOARD = xilinx.com:zcu104:part0:1.1
-# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
-
 out := out
-bit := $(out)/$(PROJECT)_top_xilinx.bit
-mcs := $(out)/$(PROJECT)_top_xilinx.mcs
+bit := $(out)/cheshire_top_xilinx.bit
+mcs := $(out)/cheshire_top_xilinx.mcs
 BIT ?= $(bit)
+
 
 VIVADOENV ?=  PROJECT=$(PROJECT)            \
               BOARD=$(BOARD)                \
@@ -49,9 +38,7 @@ endif
 VIVADOFLAGS ?= -nojournal -mode batch
 
 ip-dir  := xilinx
-# Location of ip outputs
-# ips := $(addprefix $(CAR_XIL_DIR)/,$(addsuffix .xci ,$(basename $(ips-names))))
-ips     :=  xlnx_mig_ddr4.xci
+ips     :=  xlnx_mig_7_ddr3.xci
 
 all: $(mcs)
 
@@ -69,9 +56,8 @@ $(ips):
 	cd $(ip-dir)/$(basename $@) && $(MAKE) clean && $(VIVADOENV) VIVADO="$(VIVADO)" $(MAKE)
 	cp $(ip-dir)/$(basename $@)/$(basename $@).srcs/sources_1/ip/$(basename $@)/$@ $@
 
-
 gui:
-	@echo "Starting $(VIVADO) GUI"
+	@echo "Starting $(vivado) GUI"
 	@$(VIVADOENV) $(VIVADO) -nojournal -mode gui $(PROJECT).xpr &
 
 program:
@@ -81,4 +67,5 @@ program:
 clean:
 	rm -rf *.log *.jou *.str *.mif *.xci *.xpr .Xil/ $(out) $(PROJECT).cache $(PROJECT).hw $(PROJECT).ioplanning $(PROJECT).ip_user_files $(PROJECT).runs $(PROJECT).sim
 
-.PHONY: clean
+.PHONY:
+	clean
