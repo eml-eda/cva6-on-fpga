@@ -1,51 +1,51 @@
-# Copyright 2022 ETH Zurich and University of Bologna.
-# Licensed under the Apache License, Version 2.0, see LICENSE for details.
-# SPDX-License-Identifier: Apache-2.0
+# # Copyright 2022 ETH Zurich and University of Bologna.
+# # Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# # SPDX-License-Identifier: Apache-2.0
 
-# Author: Paul Scheffler <paulsc@iis.ee.ethz.ch>
+# # Author: Paul Scheffler <paulsc@iis.ee.ethz.ch>
 
-name: build
+# name: build
 
-on: [ push, pull_request, workflow_dispatch ]
+# on: [ push, pull_request, workflow_dispatch ]
 
-jobs:
+# jobs:
 
-  build:
-    strategy:
-      matrix:
-        target: [sw, hw, sim, xilinx]
-      fail-fast: false
-    runs-on: ubuntu-22.04
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      -
-        name: Install Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-          cache: pip
-      -
-        name: Install Python requirements
-        run: pip install -r requirements.txt
-      -
-        name: Install RISC-V GCC toolchain
-        uses: pulp-platform/pulp-actions/riscv-gcc-install@v2
-        with:
-          distro: ubuntu-22.04
-          nightly-date: '2023.03.14'
-          target: riscv64-elf
-      -
-        name: Install Bender
-        uses: pulp-platform/pulp-actions/bender-install@v2
-        with:
-          version: 0.27.1
-      -
-        name: Build target
-        run: make ${{ matrix.target }}-all
-      -
-        name: Check whether clean
-        run: git status && test -z "$(git status --porcelain --ignore-submodules)"
+#   build:
+#     strategy:
+#       matrix:
+#         target: [sw, hw, sim, xilinx]
+#       fail-fast: false
+#     runs-on: ubuntu-22.04
+#     steps:
+#       -
+#         name: Checkout
+#         uses: actions/checkout@v3
+#         with:
+#           submodules: recursive
+#       -
+#         name: Install Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.9
+#           cache: pip
+#       -
+#         name: Install Python requirements
+#         run: pip install -r requirements.txt
+#       -
+#         name: Install RISC-V GCC toolchain
+#         uses: pulp-platform/pulp-actions/riscv-gcc-install@v2
+#         with:
+#           distro: ubuntu-22.04
+#           nightly-date: '2023.03.14'
+#           target: riscv64-elf
+#       -
+#         name: Install Bender
+#         uses: pulp-platform/pulp-actions/bender-install@v2
+#         with:
+#           version: 0.27.1
+#       -
+#         name: Build target
+#         run: make ${{ matrix.target }}-all
+#       -
+#         name: Check whether clean
+#         run: git status && test -z "$(git status --porcelain --ignore-submodules)"

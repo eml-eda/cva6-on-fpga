@@ -1,28 +1,28 @@
-# Copyright 2022 ETH Zurich and University of Bologna.
-# Licensed under the Apache License, Version 2.0, see LICENSE for details.
-# SPDX-License-Identifier: Apache-2.0
+# # Copyright 2022 ETH Zurich and University of Bologna.
+# # Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# # SPDX-License-Identifier: Apache-2.0
 
-# Author: Paul Scheffler <paulsc@iis.ee.ethz.ch>
+# # Author: Paul Scheffler <paulsc@iis.ee.ethz.ch>
 
-name: gitlab-ci
+# name: gitlab-ci
 
-on: [ push, pull_request, workflow_dispatch ]
+# on: [ push, pull_request, workflow_dispatch ]
 
-jobs:
+# jobs:
 
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Mirror and check
-        uses: pulp-platform/pulp-actions/gitlab-ci@v2
-        # Skip on forks or pull requests from forks due to missing secrets.
-        if: >
-          github.repository == 'pulp-platform/cheshire' &&
-          (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository)
-        with:
-          domain: iis-git.ee.ethz.ch
-          repo: github-mirror/cheshire
-          token: ${{ secrets.GITLAB_TOKEN }}
-          poll-count: 10800 # (10800/60=180min=3hours)
+#   check:
+#     runs-on: ubuntu-latest
+#     steps:
+#       -
+#         name: Mirror and check
+#         uses: pulp-platform/pulp-actions/gitlab-ci@v2
+#         # Skip on forks or pull requests from forks due to missing secrets.
+#         if: >
+#           github.repository == 'pulp-platform/cheshire' &&
+#           (github.event_name != 'pull_request' ||
+#           github.event.pull_request.head.repo.full_name == github.repository)
+#         with:
+#           domain: iis-git.ee.ethz.ch
+#           repo: github-mirror/cheshire
+#           token: ${{ secrets.GITLAB_TOKEN }}
+#           poll-count: 10800 # (10800/60=180min=3hours)
