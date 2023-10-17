@@ -14,25 +14,26 @@ package cheshire_pkg;
   //  SoC  //
   ///////////
 
-  // Return either the argument minus 1 or 0 if 0; useful for IO vector width declaration
+  //! Return either the argument minus 1 or 0 if 0; useful for IO vector width declaration
   function automatic integer unsigned iomsb (input integer unsigned width);
       return (width != 32'd0) ? unsigned'(width-1) : 32'd0;
   endfunction
 
   // Parameterization constants
-  localparam int unsigned MaxCoresWidth     = 5;
-  localparam int unsigned MaxExtAxiMstWidth = 4;
-  localparam int unsigned MaxExtAxiSlvWidth = 4;
-  localparam int unsigned MaxExtRegSlvWidth = 4;
+
+  localparam int unsigned MaxCoresWidth     = 5; //! This parameter specifies the maximum width (in bits) for representing the number of cores in the system. Since it's set to 5, it means you can represent up to 2^5 = 32 different cores. This is effectively setting an upper limit on how many cores the system can handle.
+  localparam int unsigned MaxExtAxiMstWidth = 4; //! This parameter is related to the AXI (Advanced eXtensible Interface) bus, a popular bus interface in System-on-Chip (SoC) designs. Specifically, it sets the maximum width for representing external AXI masters. A value of 4 means you can represent up to 2^4 = 16 different AXI masters.
+  localparam int unsigned MaxExtAxiSlvWidth = 4; //! Similarly, this is another parameter related to the AXI bus. It sets the maximum width for representing external AXI slaves. Like the masters, a value of 4 means the system can handle up to 16 external AXI slaves.
+  localparam int unsigned MaxExtRegSlvWidth = 4; //!This parameter defines the maximum width for representing external register slaves. Again, with a value of 4, it implies the system can support up to 2^4 = 16 external register slaves.
 
   // Parameters defined by generated hardware (regenerate to adapt)
   localparam int unsigned SpihNumCs       = spi_host_reg_pkg::NumCS - 1;  // Last CS is dummy
-  localparam int unsigned SlinkNumChan    = serial_link_single_channel_reg_pkg::NumChannels;
-  localparam int unsigned SlinkNumLanes   = serial_link_single_channel_reg_pkg::NumBits/2;
-  localparam int unsigned SlinkMaxClkDiv  = 1 << serial_link_single_channel_reg_pkg::Log2MaxClkDiv;
-  localparam int unsigned ClintNumCores   = clint_reg_pkg::NumCores;
+  localparam int unsigned SlinkNumChan    = serial_link_single_channel_reg_pkg::NumChannels; //! Declares a constant named SlinkNumChan which represents the number of channels in a serial link
+  localparam int unsigned SlinkNumLanes   = serial_link_single_channel_reg_pkg::NumBits/2; //! Declares a constant named SlinkNumLanes which denotes the number of lanes in the serial link
+  localparam int unsigned SlinkMaxClkDiv  = 1 << serial_link_single_channel_reg_pkg::Log2MaxClkDiv; //! Declares a constant named SlinkMaxClkDiv which signifies the maximum value for the serial link clock divider
+  localparam int unsigned ClintNumCores   = clint_reg_pkg::NumCores; //! Declares a constant named ClintNumCores that indicates the number of cores in a Clint (Core Local Interrupt Controller)
 
-  // Default JTAG ID code type
+  //! Default JTAG ID code type
   typedef struct packed {
     bit [ 3:0]  version;
     bit [15:0]  part_num;

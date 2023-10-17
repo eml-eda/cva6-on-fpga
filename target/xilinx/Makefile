@@ -6,12 +6,10 @@
 # Christopher Reinwardt <creinwar@student.ethz.ch>
 
 PROJECT      ?= cheshire
-BOARD        ?= genesys2
-XILINX_PART  ?= xc7k325tffg900-2
-XILINX_BOARD ?= digilentinc.com:genesys2:part0:1.1
+# Board in {genesys2, zcu104}
+BOARD          = zcu104
 XILINX_PORT  ?= 3332
 XILINX_HOST  ?= bordcomputer
-FPGA_PATH    ?= xilinx_tcf/Digilent/200300A8C60DB
 
 # # ZCU102
 # BOARD          = zcu102
@@ -19,11 +17,21 @@ FPGA_PATH    ?= xilinx_tcf/Digilent/200300A8C60DB
 # XILINX_BOARD   = xilinx.com:zcu102:part0:3.4
 # ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
 
-# # ZCU104
-BOARD          = zcu104
-XILINX_PART  = xczu7ev-ffvc1156-2-e
-XILINX_BOARD = xilinx.com:zcu104:part0:1.1
-# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
+ifeq ($(BOARD),genesys2)
+	XILINX_PART  ?= xc7k325tffg900-2
+	XILINX_BOARD ?= digilentinc.com:genesys2:part0:1.1
+	ips-names    := xlnx_mig_7_ddr3 xlnx_clk_wiz xlnx_vio
+	FPGA_PATH    ?= xilinx_tcf/Digilent/200300A8C60DB
+endif
+ifeq ($(BOARD),zcu104)
+	XILINX_PART  = xczu7ev-ffvc1156-2-e
+	XILINX_BOARD = xilinx.com:zcu104:part0:1.1
+	# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
+	ips := xlnx_mig_ddr4.xci
+endif
+
+# Location of ip outputs
+# ips := $(addprefix $(CAR_XIL_DIR)/,$(addsuffix .xci ,$(basename $(ips-names))))
 
 out := out
 bit := $(out)/$(PROJECT)_top_xilinx.bit
@@ -49,9 +57,6 @@ endif
 VIVADOFLAGS ?= -nojournal -mode batch
 
 ip-dir  := xilinx
-# Location of ip outputs
-# ips := $(addprefix $(CAR_XIL_DIR)/,$(addsuffix .xci ,$(basename $(ips-names))))
-ips     :=  xlnx_mig_ddr4.xci
 
 all: $(mcs)
 
@@ -66,7 +71,7 @@ $(bit): $(ips)
 
 $(ips):
 	@echo "Generating IP $(basename $@)"
-	cd $(ip-dir)/$(basename $@) && $(MAKE) clean && $(VIVADOENV) VIVADO="$(VIVADO)" $(MAKE)
+	# cd $(ip-dir)/$(basename $@) && $(MAKE) clean && $(VIVADOENV) VIVADO="$(VIVADO)" $(MAKE)
 	cp $(ip-dir)/$(basename $@)/$(basename $@).srcs/sources_1/ip/$(basename $@)/$@ $@
 
 
