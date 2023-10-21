@@ -7,7 +7,7 @@
 
 PROJECT      ?= cheshire
 # Board in {genesys2, zcu104}
-BOARD          = zcu104
+BOARD          = pynq-z1
 XILINX_PORT  ?= 3332
 XILINX_HOST  ?= bordcomputer
 
@@ -28,6 +28,10 @@ ifeq ($(BOARD),zcu104)
 	XILINX_BOARD = xilinx.com:zcu104:part0:1.1
 	# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
 	ips := xlnx_mig_ddr4.xci
+endif
+ifeq ($(BOARD),pynq-z1)
+	XILINX_PART = xc7z020clg400-1
+	XILINX_BOARD = www.digilentinc.com:pynq-z1:part0:1.0
 endif
 
 # Location of ip outputs
@@ -71,7 +75,7 @@ $(bit): $(ips)
 
 $(ips):
 	@echo "Generating IP $(basename $@)"
-	# cd $(ip-dir)/$(basename $@) && $(MAKE) clean && $(VIVADOENV) VIVADO="$(VIVADO)" $(MAKE)
+	cd $(ip-dir)/$(basename $@) && $(MAKE) clean && $(VIVADOENV) VIVADO="$(VIVADO)" $(MAKE)
 	cp $(ip-dir)/$(basename $@)/$(basename $@).srcs/sources_1/ip/$(basename $@)/$@ $@
 
 

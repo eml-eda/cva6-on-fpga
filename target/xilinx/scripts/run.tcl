@@ -12,7 +12,13 @@ if {$::env(BOARD) eq "genesys2"} {
       add_files -fileset constrs_1 -norecurse constraints/kc705.xdc
 } elseif {$::env(BOARD) eq "vc707"} {
       add_files -fileset constrs_1 -norecurse constraints/vc707.xdc
-} 
+} elseif {$::env(BOARD) eq "zcu104"} {
+      add_files -fileset constrs_1 -norecurse constraints/zcu104.xdc
+} elseif {$::env(BOARD) eq "zcu102"} {
+      add_files -fileset constrs_1 -norecurse constraints/zcu102.xdc
+} elseif {$::env(BOARD) eq "pynq-z1"} {
+      add_files -fileset constrs_1 -norecurse constraints/pynq-z1.xdc
+}
 
 # Ips selection
 switch $::env(BOARD) {
@@ -30,7 +36,7 @@ switch $::env(BOARD) {
                         "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
                         "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
             }
-      "zcu104" {
+      "zcu104" - "pynq-z1" {
             set ips {
                   "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci"
             } 
@@ -48,7 +54,7 @@ set_property top ${project}_top_xilinx [current_fileset]
 
 update_compile_order -fileset sources_1
 
-# add_files -fileset constrs_1 -norecurse constraints/$project.xdc
+add_files -fileset constrs_1 -norecurse constraints/$project.xdc
 
 set_property strategy Flow_PerfOptimized_high [get_runs synth_1]
 set_property strategy Performance_ExtraTimingOpt [get_runs impl_1]
