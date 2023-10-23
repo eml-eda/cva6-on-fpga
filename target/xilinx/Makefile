@@ -6,8 +6,8 @@
 # Christopher Reinwardt <creinwar@student.ethz.ch>
 
 PROJECT      ?= cheshire
-# Board in {genesys2, zcu104}
-BOARD          = pynq-z1
+# Board in {genesys2, zcu104, pynq-z1}
+BOARD          = zcu104
 XILINX_PORT  ?= 3332
 XILINX_HOST  ?= bordcomputer
 
