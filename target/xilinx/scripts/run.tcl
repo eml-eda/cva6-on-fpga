@@ -7,7 +7,7 @@
 # hard-coded to Genesys 2 for the moment
 
 if {$::env(BOARD) eq "genesys2"} {
-    add_files -fileset constrs_1 -norecurse constraints/genesys2.xdc
+      add_files -fileset constrs_1 -norecurse constraints/genesys2.xdc
 } elseif {$::env(BOARD) eq "kc705"} {
       add_files -fileset constrs_1 -norecurse constraints/kc705.xdc
 } elseif {$::env(BOARD) eq "vc707"} {
@@ -24,22 +24,21 @@ if {$::env(BOARD) eq "genesys2"} {
 switch $::env(BOARD) {
       "genesys2" - "kc705" - "vc707" {
             set ips { "xilinx/xlnx_mig_7_ddr3/xlnx_mig_7_ddr3.srcs/sources_1/ip/xlnx_mig_7_ddr3/xlnx_mig_7_ddr3.xci" \
-                        "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
+                  "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
                         "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
             }
       "vcu128" {
             set ips { "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
-                        "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
+                  "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
             }
       "zcu102" {
-            set ips { "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci" \
-                        "xilinx/xlnx_clk_wiz/xlnx_clk_wiz.srcs/sources_1/ip/xlnx_clk_wiz/xlnx_clk_wiz.xci" \
-                        "xilinx/xlnx_vio/xlnx_vio.srcs/sources_1/ip/xlnx_vio/xlnx_vio.xci" }
+            set ips { "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci"
             }
+      }
       "zcu104" - "pynq-z1" {
             set ips {
                   "xilinx/xlnx_mig_ddr4/xlnx_mig_ddr4.srcs/sources_1/ip/xlnx_mig_ddr4/xlnx_mig_ddr4.xci"
-            } 
+            }
       }
       default {
             set ips {}
@@ -88,10 +87,10 @@ wait_on_run impl_1
 open_run impl_1
 set timingrep [report_timing_summary -no_header -no_detailed_paths -return_string]
 if {[info exists ::env(CHECK_TIMING)] && $::env(CHECK_TIMING)==1} {
-  if {! [string match -nocase {*timing constraints are met*} $timingrep]} {
-    send_msg_id {USER 1-1} ERROR {Timing constraints were not met.}
-    return -code error
-  }
+      if {! [string match -nocase {*timing constraints are met*} $timingrep]} {
+            send_msg_id {USER 1-1} ERROR {Timing constraints were not met.}
+            return -code error
+      }
 }
 
 # output Verilog netlist + SDC for timing simulation

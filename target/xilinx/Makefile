@@ -6,16 +6,11 @@
 # Christopher Reinwardt <creinwar@student.ethz.ch>
 
 PROJECT      ?= cheshire
-# Board in {genesys2, zcu104, pynq-z1}
-BOARD          = zcu104
+# Board in {genesys2, zcu104, zcu102, pynq-z1}
+BOARD          = zcu102
 XILINX_PORT  ?= 3332
 XILINX_HOST  ?= bordcomputer
 
-# # ZCU102
-# BOARD          = zcu102
-# XILINX_PART    = xczu9eg-ffvb1156-2-e
-# XILINX_BOARD   = xilinx.com:zcu102:part0:3.4
-# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
 
 ifeq ($(BOARD),genesys2)
 	XILINX_PART  ?= xc7k325tffg900-2
@@ -27,6 +22,11 @@ ifeq ($(BOARD),zcu104)
 	XILINX_PART  = xczu7ev-ffvc1156-2-e
 	XILINX_BOARD = xilinx.com:zcu104:part0:1.1
 	# ips-names      := xlnx_mig_ddr4 xlnx_clk_wiz xlnx_vio
+	ips := xlnx_mig_ddr4.xci
+endif
+ifeq ($(BOARD),zcu102)
+	XILINX_PART = xczu9eg-ffvb1156-2-e
+	XILINX_BOARD = xilinx.com:zcu102:part0:3.4
 	ips := xlnx_mig_ddr4.xci
 endif
 ifeq ($(BOARD),pynq-z1)
