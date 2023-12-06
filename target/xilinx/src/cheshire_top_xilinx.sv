@@ -166,6 +166,8 @@ module cheshire_top_xilinx
 
   logic rst_n;
 
+  assign rst_n = cpu_resetn & ~jtag_trst_ni;
+
   // Statically assign the response user signals
   // B Channel user
   assign dram_resp.b.user      = '0;
@@ -174,36 +176,49 @@ module cheshire_top_xilinx
   assign dram_resp.r.user      = '0;
 
   ///////////////////
+  // Clock Generator //
+  ///////////////////
+  IBUFGDS #(
+    .IOSTANDARD  ("LVDS" ),
+    .DIFF_TERM   ("FALSE"),
+    .IBUF_LOW_PWR("FALSE")
+  ) i_sysclk_iobuf (
+    .I (sysclk_p),
+    .IB(sysclk_n),
+    .O (soc_clk)
+  );
+
+  ///////////////////
   // Clock Divider //
   ///////////////////
 
-  clk_int_div #(
-    .DIV_VALUE_WIDTH          ( 4             ),
-    .DEFAULT_DIV_VALUE        ( 4'h4          ),
-    .ENABLE_CLOCK_IN_RESET    ( 1'b0          )
-  ) i_sys_clk_div (
-    .clk_i                ( dram_clock_out    ),
-    .rst_ni               ( ~dram_sync_reset  ),
-    .en_i                 ( 1'b1              ),
-    .test_mode_en_i       ( testmode_i        ),
-    .div_i                ( 4'h4              ),
-    .div_valid_i          ( 1'b0              ),
-    .div_ready_o          (                   ),
-    .clk_o                ( soc_clk           ),
-    .cycl_count_o         (                   )
-  );
+  // clk_int_div #(
+  //   .DIV_VALUE_WIDTH          ( 4             ),
+  //   .DEFAULT_DIV_VALUE        ( 4'h4          ),
+  //   .ENABLE_CLOCK_IN_RESET    ( 1'b0          )
+  // ) i_sys_clk_div (
+  //   .clk_i                ( dram_clock_out    ),
+  //   .rst_ni               ( ~dram_sync_reset  ),
+  //   .en_i                 ( 1'b1              ),
+  //   .test_mode_en_i       ( testmode_i        ),
+  //   .div_i                ( 4'h4              ),
+  //   .div_valid_i          ( 1'b0              ),
+  //   .div_ready_o          (                   ),
+  //   .clk_o                ( soc_clk           ),
+  //   .cycl_count_o         (                   )
+  // );
 
   /////////////////////
   // Reset Generator //
   /////////////////////
 
-  rstgen i_rstgen_main (
-    .clk_i        ( soc_clk                  ),
-    .rst_ni       ( ~dram_sync_reset         ),
-    .test_mode_i  ( test_en                  ),
-    .rst_no       ( rst_n                    ),
-    .init_no      (                          ) // keep open
-  );
+  // rstgen i_rstgen_main (
+  //   .clk_i        ( soc_clk                  ),
+  //   .rst_ni       ( ~dram_sync_reset         ),
+  //   .test_mode_i  ( test_en                  ),
+  //   .rst_no       ( rst_n                    ),
+  //   .init_no      (                          ) // keep open
+  // );
 
 
   ///////////////////////////////////////////

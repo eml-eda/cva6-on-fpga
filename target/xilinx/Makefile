@@ -27,7 +27,7 @@ endif
 ifeq ($(BOARD),zcu102)
 	XILINX_PART = xczu9eg-ffvb1156-2-e
 	XILINX_BOARD = xilinx.com:zcu102:part0:3.4
-	ips := xlnx_mig_ddr4.xci
+	# ips := xlnx_mig_ddr4.xci
 endif
 ifeq ($(BOARD),pynq-z1)
 	XILINX_PART = xc7z020clg400-1

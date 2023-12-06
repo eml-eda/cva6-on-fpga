@@ -49,7 +49,7 @@ read_ip $ips
 
 source scripts/add_sources.tcl
 
-set_property top cheshire_top_xilinx_wrapper [current_fileset]
+set_property top cheshire_top_xilinx_wrapper_simple [current_fileset]
 
 update_compile_order -fileset sources_1
 

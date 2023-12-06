@@ -7,25 +7,30 @@
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets -of [get_ports jtag_tck_i]]
 set_property CLOCK_BUFFER_TYPE NONE [get_nets -of [get_ports jtag_tck_i]]
 
+# Reset
+
+set_false_path -from [get_ports cpu_reset]
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets cpu_reset_IBUF_inst/O]
+
 # Hyperbus
 # 10MHz
 set period_hyperbus 100
-create_clock -period [expr $period_hyperbus] -name rwds0_clk [get_ports pad_hyper_rwds[0]]
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets gen_hyper_phy[0].padinst_hyper_rwds0/iobuf_i/O]
+# create_clock -period [expr $period_hyperbus] -name rwds0_clk [get_ports pad_hyper_rwds[0]]
+# set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets gen_hyper_phy[0].padinst_hyper_rwds0/iobuf_i/O]
 
 
-set clk_rwds_delayed_pin [get_pins -of_objects [get_cells i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_delay_rx_rwds_90/i_delay] -filter {DIRECTION =~ OUT}]
-set clk_rwds_delayed_inv_pin [get_pins i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_rx_rwds_cdc_fifo/src_clk_i]
+# set clk_rwds_delayed_pin [get_pins -of_objects [get_cells i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_delay_rx_rwds_90/i_delay] -filter {DIRECTION =~ OUT}]
+# set clk_rwds_delayed_inv_pin [get_pins i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_rx_rwds_cdc_fifo/src_clk_i]
 
 
 set clk_rx_shift [expr $period_hyperbus/10]
 set rwds_input_delay [expr $period_hyperbus/4]
-create_generated_clock -name clk_rwds_delayed0 -edges {1 2 3} -edge_shift "$clk_rx_shift $clk_rx_shift $clk_rx_shift" \
+# create_generated_clock -name clk_rwds_delayed0 -edges {1 2 3} -edge_shift "$clk_rx_shift $clk_rx_shift $clk_rx_shift" \
   -source [get_ports FMC_hyper0_rwds] $clk_rwds_delayed_pin
-set_clock_latency [expr ${rwds_input_delay}] clk_rwds_delayed0
+# set_clock_latency [expr ${rwds_input_delay}] clk_rwds_delayed0
 
-create_generated_clock -name clk_rwds_sample0 -invert  -divide_by 1 -source $clk_rwds_delayed_pin $clk_rwds_delayed_inv_pin
-set_clock_latency [expr ${rwds_input_delay}] clk_rwds_sample0
+# create_generated_clock -name clk_rwds_sample0 -invert  -divide_by 1 -source $clk_rwds_delayed_pin $clk_rwds_delayed_inv_pin
+# set_clock_latency [expr ${rwds_input_delay}] clk_rwds_sample0
 
 
 #################################################################################
@@ -1104,20 +1109,20 @@ set_property -dict {PACKAGE_PIN A20 IOSTANDARD LVCMOS33} [get_ports jtag_tms_i]
 set_property -dict {PACKAGE_PIN B20 IOSTANDARD LVCMOS33} [get_ports jtag_tdi_i]
 set_property -dict {PACKAGE_PIN A22 IOSTANDARD LVCMOS33} [get_ports jtag_tdo_o]
 set_property -dict {PACKAGE_PIN A21 IOSTANDARD LVCMOS33} [get_ports jtag_tck_i]
-set_property -dict {PACKAGE_PIN B21 IOSTANDARD LVCMOS33} [get_ports jtag_trst_ni]
+set_property -dict {PACKAGE_PIN B21 IOSTANDARD LVCMOS33} [get_ports jtag_trst_i]
 
 
 ######################################################################
 # UART mapping
 ######################################################################
-set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
-set_property -dict {PACKAGE_PIN F13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
+# set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
+# set_property -dict {PACKAGE_PIN F13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
 
 ######################################################################
 # System Clock mapping
 ######################################################################
-set_property -dict {PACKAGE_PIN F21 IOSTANDARD LVDS_25} [get_ports sysclk_p]
-set_property -dict {PACKAGE_PIN G21 IOSTANDARD LVDS_25} [get_ports sysclk_n]
+set_property -dict {PACKAGE_PIN F21 IOSTANDARD LVDS_25} [get_ports sysclk_n]
+set_property -dict {PACKAGE_PIN G21 IOSTANDARD LVDS_25} [get_ports sysclk_p]
 
 ######################################################################
 # CPU Reset mapping
@@ -1134,15 +1139,26 @@ set_property -dict {PACKAGE_PIN J11 IOSTANDARD LVCMOS33} [get_ports i2c_sda_io]
 ######################################################################
 # SDIO mapping
 ######################################################################
-set_property -dict {PACKAGE_PIN j25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[0]]
-set_property -dict {PACKAGE_PIN L25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[1]]
-set_property -dict {PACKAGE_PIN M25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[2]]
-set_property -dict {PACKAGE_PIN K25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[3]]
-set_property -dict {PACKAGE_PIN P25 IOSTANDARD LVCMOS33} [get_ports sd_cmd_o]
-set_property -dict {PACKAGE_PIN N23 IOSTANDARD LVCMOS33} [get_ports sd_sclk_o]
+# set_property -dict {PACKAGE_PIN j25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[0]]
+# set_property -dict {PACKAGE_PIN L25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[1]]
+# set_property -dict {PACKAGE_PIN M25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[2]]
+# set_property -dict {PACKAGE_PIN K25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[3]]
+# set_property -dict {PACKAGE_PIN P25 IOSTANDARD LVCMOS33} [get_ports sd_cmd_o]
+# set_property -dict {PACKAGE_PIN N23 IOSTANDARD LVCMOS33} [get_ports sd_sclk_o]
 
 ######################################################################
 # Boot Mode
 ######################################################################
 set_property -dict {PACKAGE_PIN AN14 IOSTANDARD LVCMOS33} [get_ports boot_mode_i[0]]
 set_property -dict {PACKAGE_PIN AP14 IOSTANDARD LVCMOS33} [get_ports boot_mode_i[1]]
+
+######################################################################
+# Test Mode
+######################################################################
+set_property -dict {PACKAGE_PIN AM14 IOSTANDARD LVCMOS33} [get_ports test_mode_i]
+
+######################################################################
+# User LED mapping
+######################################################################
+# set_property -dict {PACKAGE_PIN AG14 IOSTANDARD LVCMOS33} [get_ports led_boot_mode_o[0]]
+# set_property -dict {PACKAGE_PIN AG14 IOSTANDARD LVCMOS33} [get_ports led_boot_mode_o[1]]
