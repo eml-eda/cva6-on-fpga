@@ -7,30 +7,25 @@
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets -of [get_ports jtag_tck_i]]
 set_property CLOCK_BUFFER_TYPE NONE [get_nets -of [get_ports jtag_tck_i]]
 
-# Reset
-
-set_false_path -from [get_ports cpu_reset]
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets cpu_reset_IBUF_inst/O]
-
 # Hyperbus
 # 10MHz
 set period_hyperbus 100
-# create_clock -period [expr $period_hyperbus] -name rwds0_clk [get_ports pad_hyper_rwds[0]]
-# set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets gen_hyper_phy[0].padinst_hyper_rwds0/iobuf_i/O]
+create_clock -period [expr $period_hyperbus] -name rwds0_clk [get_ports pad_hyper_rwds[0]]
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets gen_hyper_phy[0].padinst_hyper_rwds0/iobuf_i/O]
 
 
-# set clk_rwds_delayed_pin [get_pins -of_objects [get_cells i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_delay_rx_rwds_90/i_delay] -filter {DIRECTION =~ OUT}]
-# set clk_rwds_delayed_inv_pin [get_pins i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_rx_rwds_cdc_fifo/src_clk_i]
+set clk_rwds_delayed_pin [get_pins -of_objects [get_cells i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_delay_rx_rwds_90/i_delay] -filter {DIRECTION =~ OUT}]
+set clk_rwds_delayed_inv_pin [get_pins i_iguana/i_hyperbus/i_phy/i_phy/i_trx/i_rx_rwds_cdc_fifo/src_clk_i]
 
 
 set clk_rx_shift [expr $period_hyperbus/10]
 set rwds_input_delay [expr $period_hyperbus/4]
-# create_generated_clock -name clk_rwds_delayed0 -edges {1 2 3} -edge_shift "$clk_rx_shift $clk_rx_shift $clk_rx_shift" \
+create_generated_clock -name clk_rwds_delayed0 -edges {1 2 3} -edge_shift "$clk_rx_shift $clk_rx_shift $clk_rx_shift" \
   -source [get_ports FMC_hyper0_rwds] $clk_rwds_delayed_pin
-# set_clock_latency [expr ${rwds_input_delay}] clk_rwds_delayed0
+set_clock_latency [expr ${rwds_input_delay}] clk_rwds_delayed0
 
-# create_generated_clock -name clk_rwds_sample0 -invert  -divide_by 1 -source $clk_rwds_delayed_pin $clk_rwds_delayed_inv_pin
-# set_clock_latency [expr ${rwds_input_delay}] clk_rwds_sample0
+create_generated_clock -name clk_rwds_sample0 -invert  -divide_by 1 -source $clk_rwds_delayed_pin $clk_rwds_delayed_inv_pin
+set_clock_latency [expr ${rwds_input_delay}] clk_rwds_sample0
 
 
 #################################################################################
@@ -101,10 +96,10 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS33 [get_ports "PL_I2C0_SCL_LS"] ;# Bank  50 VCCO - VCC3V3   - IO_L1N_AD15N_50
 #set_property PACKAGE_PIN J11      [get_ports "PL_I2C0_SDA_LS"] ;# Bank  50 VCCO - VCC3V3   - IO_L1P_AD15P_50
 #set_property IOSTANDARD  LVCMOS33 [get_ports "PL_I2C0_SDA_LS"] ;# Bank  50 VCCO - VCC3V3   - IO_L1P_AD15P_50
-# set_property PACKAGE_PIN E13      [get_ports "uart_tx_o"] ;# Bank  49 VCCO - VCC3V3   - IO_L12N_AD8N_49
-# set_property IOSTANDARD  LVCMOS33 [get_ports "uart_tx_o"] ;# Bank  49 VCCO - VCC3V3   - IO_L12N_AD8N_49
-# set_property PACKAGE_PIN F13      [get_ports "uart_rx_i"] ;# Bank  49 VCCO - VCC3V3   - IO_L12P_AD8P_49
-# set_property IOSTANDARD  LVCMOS33 [get_ports "uart_rx_i"] ;# Bank  49 VCCO - VCC3V3   - IO_L12P_AD8P_49
+set_property PACKAGE_PIN E13      [get_ports "uart_tx_o"] ;# Bank  49 VCCO - VCC3V3   - IO_L12N_AD8N_49
+set_property IOSTANDARD  LVCMOS33 [get_ports "uart_tx_o"] ;# Bank  49 VCCO - VCC3V3   - IO_L12N_AD8N_49
+set_property PACKAGE_PIN F13      [get_ports "uart_rx_i"] ;# Bank  49 VCCO - VCC3V3   - IO_L12P_AD8P_49
+set_property IOSTANDARD  LVCMOS33 [get_ports "uart_rx_i"] ;# Bank  49 VCCO - VCC3V3   - IO_L12P_AD8P_49
 #set_property PACKAGE_PIN D12      [get_ports "UART2_RTS_O_B"] ;# Bank  49 VCCO - VCC3V3   - IO_L11N_AD9N_49
 #set_property IOSTANDARD  LVCMOS33 [get_ports "UART2_RTS_O_B"] ;# Bank  49 VCCO - VCC3V3   - IO_L11N_AD9N_49
 #set_property PACKAGE_PIN E12      [get_ports "UART2_CTS_I_B"] ;# Bank  49 VCCO - VCC3V3   - IO_L11P_AD9P_49
@@ -213,14 +208,14 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS33 [get_ports "PMOD0_6"] ;# Bank  47 VCCO - VCC3V3   - IO_L9N_AD3N_47
 #set_property PACKAGE_PIN D21      [get_ports "PMOD0_7"] ;# Bank  47 VCCO - VCC3V3   - IO_L9P_AD3P_47
 #set_property IOSTANDARD  LVCMOS33 [get_ports "PMOD0_7"] ;# Bank  47 VCCO - VCC3V3   - IO_L9P_AD3P_47
-# set_property PACKAGE_PIN D20      [get_ports "jtag_tms_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8N_HDGC_AD4N_47
-# set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tms_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8N_HDGC_AD4N_47
-# set_property PACKAGE_PIN E20      [get_ports "jtag_tdi_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8P_HDGC_AD4P_47
-# set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tdi_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8P_HDGC_AD4P_47
-# set_property PACKAGE_PIN D22      [get_ports "jtag_tdo_o"] ;# Bank  47 VCCO - VCC3V3   - IO_L7N_HDGC_AD5N_47
-# set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tdo_o"] ;# Bank  47 VCCO - VCC3V3   - IO_L7N_HDGC_AD5N_47
-# set_property PACKAGE_PIN E22      [get_ports "jtag_tck_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L7P_HDGC_AD5P_47
-# set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tck_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L7P_HDGC_AD5P_47
+set_property PACKAGE_PIN D20      [get_ports "jtag_tms_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8N_HDGC_AD4N_47
+set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tms_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8N_HDGC_AD4N_47
+set_property PACKAGE_PIN E20      [get_ports "jtag_tdi_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8P_HDGC_AD4P_47
+set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tdi_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L8P_HDGC_AD4P_47
+set_property PACKAGE_PIN D22      [get_ports "jtag_tdo_o"] ;# Bank  47 VCCO - VCC3V3   - IO_L7N_HDGC_AD5N_47
+set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tdo_o"] ;# Bank  47 VCCO - VCC3V3   - IO_L7N_HDGC_AD5N_47
+set_property PACKAGE_PIN E22      [get_ports "jtag_tck_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L7P_HDGC_AD5P_47
+set_property IOSTANDARD  LVCMOS33 [get_ports "jtag_tck_i"] ;# Bank  47 VCCO - VCC3V3   - IO_L7P_HDGC_AD5P_47
 #set_property PACKAGE_PIN F20      [get_ports "PMOD1_4"] ;# Bank  47 VCCO - VCC3V3   - IO_L6N_HDGC_AD6N_47
 #set_property IOSTANDARD  LVCMOS33 [get_ports "PMOD1_4"] ;# Bank  47 VCCO - VCC3V3   - IO_L6N_HDGC_AD6N_47
 #set_property PACKAGE_PIN G20      [get_ports "PMOD1_5"] ;# Bank  47 VCCO - VCC3V3   - IO_L6P_HDGC_AD6P_47
@@ -277,8 +272,8 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVDS_25 [get_ports "CLK_74_25_N"] ;# Bank  44 VCCO - VCC3V3   - IO_L5N_HDGC_AD7N_44
 #set_property PACKAGE_PIN AK15     [get_ports "CLK_74_25_P"] ;# Bank  44 VCCO - VCC3V3   - IO_L5P_HDGC_AD7P_44
 #set_property IOSTANDARD  LVDS_25 [get_ports "CLK_74_25_P"] ;# Bank  44 VCCO - VCC3V3   - IO_L5P_HDGC_AD7P_44
-# set_property PACKAGE_PIN AM13     [get_ports "cpu_resetn"] ;# Bank  44 VCCO - VCC3V3   - IO_L4N_AD8N_44
-# set_property IOSTANDARD  LVCMOS33 [get_ports "cpu_resetn"] ;# Bank  44 VCCO - VCC3V3   - IO_L4N_AD8N_44
+set_property PACKAGE_PIN AM13     [get_ports "cpu_reset"] ;# Bank  44 VCCO - VCC3V3   - IO_L4N_AD8N_44
+set_property IOSTANDARD  LVCMOS33 [get_ports "cpu_reset"] ;# Bank  44 VCCO - VCC3V3   - IO_L4N_AD8N_44
 #set_property PACKAGE_PIN AL13     [get_ports "GPIO_DIP_SW6"] ;# Bank  44 VCCO - VCC3V3   - IO_L4P_AD8P_44
 #set_property IOSTANDARD  LVCMOS33 [get_ports "GPIO_DIP_SW6"] ;# Bank  44 VCCO - VCC3V3   - IO_L4P_AD8P_44
 #set_property PACKAGE_PIN AP12     [get_ports "GPIO_DIP_SW5"] ;# Bank  44 VCCO - VCC3V3   - IO_L3N_AD9N_44
@@ -301,16 +296,16 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA19_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L23N_T3U_N9_67
 #set_property PACKAGE_PIN L13      [get_ports "FMC_HPC0_LA19_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L23P_T3U_N8_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA19_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L23P_T3U_N8_67
-# set_property PACKAGE_PIN M13      [get_ports "pad_hyper_dq[0][7]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_67
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][7]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_67
-# set_property PACKAGE_PIN N13      [get_ports "pad_hyper_dq[0][6]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22P_T3U_N6_DBC_AD0P_67
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][6]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22P_T3U_N6_DBC_AD0P_67
+set_property PACKAGE_PIN M13      [get_ports "pad_hyper_dq[0][7]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_67
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][7]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_67
+set_property PACKAGE_PIN N13      [get_ports "pad_hyper_dq[0][6]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22P_T3U_N6_DBC_AD0P_67
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][6]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L22P_T3U_N6_DBC_AD0P_67
 #set_property PACKAGE_PIN N12      [get_ports "FMC_HPC0_LA21_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L21N_T3L_N5_AD8N_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA21_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L21N_T3L_N5_AD8N_67
 #set_property PACKAGE_PIN P12      [get_ports "FMC_HPC0_LA21_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L21P_T3L_N4_AD8P_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA21_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L21P_T3L_N4_AD8P_67
-# set_property PACKAGE_PIN M14      [get_ports "pad_hyper_csn[0][0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_67     # J20 - 9 = gray
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_csn[0][0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_67
+set_property PACKAGE_PIN M14      [get_ports "pad_hyper_csn[0][0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_67     # J20 - 9 = gray
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_csn[0][0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_67
 #set_property PACKAGE_PIN M15      [get_ports "FMC_HPC0_LA22_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA22_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_67
 #set_property PACKAGE_PIN K16      [get_ports "FMC_HPC0_LA23_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L19N_T3L_N1_DBC_AD9N_67
@@ -327,8 +322,8 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA24_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L18P_T2U_N10_AD2P_67
 #set_property PACKAGE_PIN L11      [get_ports "FMC_HPC0_LA25_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17N_T2U_N9_AD10N_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA25_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17N_T2U_N9_AD10N_67
-# set_property PACKAGE_PIN M11      [get_ports "pad_hyper_reset[0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_67   # J20 - 6 = violet
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_reset[0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_67
+set_property PACKAGE_PIN M11      [get_ports "pad_hyper_reset[0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_67   # J20 - 6 = violet
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_reset[0]"] ;# Bank  67 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_67
 #set_property PACKAGE_PIN N8       [get_ports "FMC_HPC0_LA18_CC_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA18_CC_N"] ;# Bank  67 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_67
 #set_property PACKAGE_PIN N9       [get_ports "FMC_HPC0_LA18_CC_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L16P_T2U_N6_QBC_AD3P_67
@@ -398,14 +393,14 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property PACKAGE_PIN W12      [get_ports "FMC_HPC1_LA29_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L1P_T0L_N0_DBC_67
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC1_LA29_P"] ;# Bank  67 VCCO - VADJ_FMC - IO_L1P_T0L_N0_DBC_67
 #Other net   PACKAGE_PIN N14      - 7N8332                    Bank  67 - VREF_67
-# set_property PACKAGE_PIN W1       [get_ports "pad_hyper_dq[0][3]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24N_T3U_N11_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][3]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24N_T3U_N11_66
-# set_property PACKAGE_PIN W2       [get_ports "pad_hyper_dq[0][2]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24P_T3U_N10_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][2]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24P_T3U_N10_66
+set_property PACKAGE_PIN W1       [get_ports "pad_hyper_dq[0][3]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24N_T3U_N11_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][3]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24N_T3U_N11_66
+set_property PACKAGE_PIN W2       [get_ports "pad_hyper_dq[0][2]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24P_T3U_N10_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][2]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L24P_T3U_N10_66
 #set_property PACKAGE_PIN V1       [get_ports "FMC_HPC0_LA02_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23N_T3U_N9_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA02_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23N_T3U_N9_66
-# set_property PACKAGE_PIN V2       [get_ports "pad_hyper_csn[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23P_T3U_N8_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_csn[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23P_T3U_N8_66
+set_property PACKAGE_PIN V2       [get_ports "pad_hyper_csn[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23P_T3U_N8_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_csn[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L23P_T3U_N8_66
 #set_property PACKAGE_PIN Y1       [get_ports "FMC_HPC0_LA03_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA03_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L22N_T3U_N7_DBC_AD0N_66
 #set_property PACKAGE_PIN Y2       [get_ports "FMC_HPC0_LA03_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L22P_T3U_N6_DBC_AD0P_66
@@ -414,10 +409,10 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA04_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L21N_T3L_N5_AD8N_66
 #set_property PACKAGE_PIN AA2      [get_ports "FMC_HPC0_LA04_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L21P_T3L_N4_AD8P_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA04_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L21P_T3L_N4_AD8P_66
-# set_property PACKAGE_PIN AC3      [get_ports "pad_hyper_dq[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_66
-# set_property PACKAGE_PIN AB3      [get_ports "pad_hyper_dq[0][0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_66
+set_property PACKAGE_PIN AC3      [get_ports "pad_hyper_dq[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][1]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20N_T3L_N3_AD1N_66
+set_property PACKAGE_PIN AB3      [get_ports "pad_hyper_dq[0][0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L20P_T3L_N2_AD1P_66
 #set_property PACKAGE_PIN AC1      [get_ports "FMC_HPC0_LA06_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L19N_T3L_N1_DBC_AD9N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA06_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L19N_T3L_N1_DBC_AD9N_66
 #set_property PACKAGE_PIN AC2      [get_ports "FMC_HPC0_LA06_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L19P_T3L_N0_DBC_AD9P_66
@@ -434,10 +429,10 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA08_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L17N_T2U_N9_AD10N_66
 #set_property PACKAGE_PIN V4       [get_ports "FMC_HPC0_LA08_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA08_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L17P_T2U_N8_AD10P_66
-# set_property PACKAGE_PIN AC4      [get_ports "pad_hyper_ckn[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_ckn[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_66
-# set_property PACKAGE_PIN AB4      [get_ports "pad_hyper_ck[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16P_T2U_N6_QBC_AD3P_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_ck[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16P_T2U_N6_QBC_AD3P_66
+set_property PACKAGE_PIN AC4      [get_ports "pad_hyper_ckn[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_ckn[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16N_T2U_N7_QBC_AD3N_66
+set_property PACKAGE_PIN AB4      [get_ports "pad_hyper_ck[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16P_T2U_N6_QBC_AD3P_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_ck[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L16P_T2U_N6_QBC_AD3P_66
 #set_property PACKAGE_PIN W4       [get_ports "FMC_HPC0_LA10_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L15N_T2L_N5_AD11N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA10_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L15N_T2L_N5_AD11N_66
 #set_property PACKAGE_PIN W5       [get_ports "FMC_HPC0_LA10_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L15P_T2L_N4_AD11P_66
@@ -468,8 +463,8 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA12_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L9P_T1L_N4_AD12P_66
 #set_property PACKAGE_PIN AC8      [get_ports "FMC_HPC0_LA13_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8N_T1L_N3_AD5N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA13_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8N_T1L_N3_AD5N_66
-# set_property PACKAGE_PIN AB8      [get_ports "pad_hyper_rwds[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8P_T1L_N2_AD5P_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_rwds[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8P_T1L_N2_AD5P_66
+set_property PACKAGE_PIN AB8      [get_ports "pad_hyper_rwds[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8P_T1L_N2_AD5P_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_rwds[0]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L8P_T1L_N2_AD5P_66
 #set_property PACKAGE_PIN AC6      [get_ports "FMC_HPC0_LA14_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L7N_T1L_N1_QBC_AD13N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA14_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L7N_T1L_N1_QBC_AD13N_66
 #set_property PACKAGE_PIN AC7      [get_ports "FMC_HPC0_LA14_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L7P_T1L_N0_QBC_AD13P_66
@@ -482,10 +477,10 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA15_N"] ;# Bank  66 VCCO - VADJ_FMC - IO_L6N_T0U_N11_AD6N_66
 #set_property PACKAGE_PIN Y10      [get_ports "FMC_HPC0_LA15_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L6P_T0U_N10_AD6P_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "FMC_HPC0_LA15_P"] ;# Bank  66 VCCO - VADJ_FMC - IO_L6P_T0U_N10_AD6P_66
-# set_property PACKAGE_PIN AA12     [get_ports "pad_hyper_dq[0][5]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5N_T0U_N9_AD14N_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][5]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5N_T0U_N9_AD14N_66
-# set_property PACKAGE_PIN Y12      [get_ports "pad_hyper_dq[0][4]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5P_T0U_N8_AD14P_66
-# set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][4]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5P_T0U_N8_AD14P_66
+set_property PACKAGE_PIN AA12     [get_ports "pad_hyper_dq[0][5]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5N_T0U_N9_AD14N_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][5]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5N_T0U_N9_AD14N_66
+set_property PACKAGE_PIN Y12      [get_ports "pad_hyper_dq[0][4]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5P_T0U_N8_AD14P_66
+set_property IOSTANDARD  LVCMOS18 [get_ports "pad_hyper_dq[0][4]"] ;# Bank  66 VCCO - VADJ_FMC - IO_L5P_T0U_N8_AD14P_66
 #set_property PACKAGE_PIN AC9      [get_ports "7N8645"] ;# Bank  66 VCCO - VADJ_FMC - IO_L4N_T0U_N7_DBC_AD7N_66
 #set_property IOSTANDARD  LVCMOS18 [get_ports "7N8645"] ;# Bank  66 VCCO - VADJ_FMC - IO_L4N_T0U_N7_DBC_AD7N_66
 #set_property PACKAGE_PIN AB9      [get_ports "7N8643"] ;# Bank  66 VCCO - VADJ_FMC - IO_L4P_T0U_N6_DBC_AD7P_66
@@ -1099,66 +1094,3 @@ set rwds_input_delay [expr $period_hyperbus/4]
 #Other net   PACKAGE_PIN U32      - GTR_REF_CLK_DP_C_N        Bank 505 - PS_MGTREFCLK3N_505
 #Other net   PACKAGE_PIN U31      - GTR_REF_CLK_DP_C_P        Bank 505 - PS_MGTREFCLK3P_505
 #Other net   PACKAGE_PIN AB28     - 69N5804                   Bank 505 - PS_MGTRREF_505
-
-
-## PMOD 0   --- JTAG
-######################################################################
-# JTAG mapping
-######################################################################
-set_property -dict {PACKAGE_PIN A20 IOSTANDARD LVCMOS33} [get_ports jtag_tms_i]
-set_property -dict {PACKAGE_PIN B20 IOSTANDARD LVCMOS33} [get_ports jtag_tdi_i]
-set_property -dict {PACKAGE_PIN A22 IOSTANDARD LVCMOS33} [get_ports jtag_tdo_o]
-set_property -dict {PACKAGE_PIN A21 IOSTANDARD LVCMOS33} [get_ports jtag_tck_i]
-set_property -dict {PACKAGE_PIN B21 IOSTANDARD LVCMOS33} [get_ports jtag_trst_i]
-
-
-######################################################################
-# UART mapping
-######################################################################
-# set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
-# set_property -dict {PACKAGE_PIN F13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
-
-######################################################################
-# System Clock mapping
-######################################################################
-set_property -dict {PACKAGE_PIN F21 IOSTANDARD LVDS_25} [get_ports sysclk_n]
-set_property -dict {PACKAGE_PIN G21 IOSTANDARD LVDS_25} [get_ports sysclk_p]
-
-######################################################################
-# CPU Reset mapping
-######################################################################
-set_property -dict {PACKAGE_PIN AM13 IOSTANDARD LVCMOS33} [get_ports cpu_reset]
-
-######################################################################
-# I2C mapping
-######################################################################
-set_property -dict {PACKAGE_PIN J10 IOSTANDARD LVCMOS33} [get_ports i2c_scl_io]
-set_property -dict {PACKAGE_PIN J11 IOSTANDARD LVCMOS33} [get_ports i2c_sda_io]
-
-
-######################################################################
-# SDIO mapping
-######################################################################
-# set_property -dict {PACKAGE_PIN j25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[0]]
-# set_property -dict {PACKAGE_PIN L25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[1]]
-# set_property -dict {PACKAGE_PIN M25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[2]]
-# set_property -dict {PACKAGE_PIN K25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[3]]
-# set_property -dict {PACKAGE_PIN P25 IOSTANDARD LVCMOS33} [get_ports sd_cmd_o]
-# set_property -dict {PACKAGE_PIN N23 IOSTANDARD LVCMOS33} [get_ports sd_sclk_o]
-
-######################################################################
-# Boot Mode
-######################################################################
-set_property -dict {PACKAGE_PIN AN14 IOSTANDARD LVCMOS33} [get_ports boot_mode_i[0]]
-set_property -dict {PACKAGE_PIN AP14 IOSTANDARD LVCMOS33} [get_ports boot_mode_i[1]]
-
-######################################################################
-# Test Mode
-######################################################################
-set_property -dict {PACKAGE_PIN AM14 IOSTANDARD LVCMOS33} [get_ports test_mode_i]
-
-######################################################################
-# User LED mapping
-######################################################################
-# set_property -dict {PACKAGE_PIN AG14 IOSTANDARD LVCMOS33} [get_ports led_boot_mode_o[0]]
-# set_property -dict {PACKAGE_PIN AG14 IOSTANDARD LVCMOS33} [get_ports led_boot_mode_o[1]]
