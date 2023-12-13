@@ -44,6 +44,7 @@ set UART_IO_SPEED 200.0
 # System Clock
 #create_clock -period $FPGA_TCK -name clk_soc [get_pins soc_clk] 
 
+# System Clock
 create_clock -period $FPGA_TCK -name clk_soc [get_ports sysclk_p]
 set_property CLOCK_DEDICATED_ROUTE ANY_CMT_COLUMN [get_nets clk_soc]
 
@@ -79,13 +80,6 @@ set_output_delay -max -clock clk_jtag [expr 0.20 * $JTAG_TCK] [get_ports jtag_td
 #set_max_delay  -from [get_ports jtag_trst_ni] $JTAG_TCK
 #set_false_path -hold -from [get_ports jtag_trst_ni]
 
-#######
-# MIG #
-#######
-
-# set_max_delay  -from [get_pins i_dram/u_xlnx_mig_7_ddr3_mig/u_ddr3_infrastructure/rstdiv0_sync_r1_reg_rep/C] $FPGA_TCK
-# set_false_path -hold -from [get_pins i_dram/u_xlnx_mig_7_ddr3_mig/u_ddr3_infrastructure/rstdiv0_sync_r1_reg_rep/C]
-
 ########
 # SPIM #
 ########
@@ -109,18 +103,11 @@ set_false_path -hold -to [get_ports {i2c_scl_io i2c_sda_io}]
 # UART #
 ########
 
-# set_max_delay [expr $UART_IO_SPEED * 0.35] -from [get_ports uart_rx_i]
-# set_false_path -hold -from [get_ports uart_rx_i]
+set_max_delay [expr $UART_IO_SPEED * 0.35] -from [get_ports uart_rx_i]
+set_false_path -hold -from [get_ports uart_rx_i]
 
-# set_max_delay [expr $UART_IO_SPEED * 0.35] -to [get_ports uart_tx_o]
-# set_false_path -hold -to [get_ports uart_tx_o]
-
-#######
-# VGA #
-#######
-
-# set_output_delay -min -clock clk_soc [expr $SOC_TCK * 0.10] [get_ports vga*]
-# set_output_delay -max -clock clk_soc [expr $SOC_TCK * 0.35] [get_ports vga*]
+set_max_delay [expr $UART_IO_SPEED * 0.35] -to [get_ports uart_tx_o]
+set_false_path -hold -to [get_ports uart_tx_o]
 
 ############
 # Switches #

@@ -11,8 +11,15 @@ import cheshire_pkg::*;
     input logic         jtag_tdi_i,
     output logic        jtag_tdo_o,
     input logic         jtag_trst_i,
+    output logic        uart_tx_o,
+    input logic         uart_rx_i,
     inout wire          i2c_scl_io,
     inout wire          i2c_sda_io
+    // input logic         sd_cd_i,
+    // output logic        sd_cmd_o,
+    // inout wire  [3:0]   sd_d_io,
+    // output logic        sd_reset_o,
+    // output logic        sd_sclk_o
   );
 
 
@@ -165,6 +172,44 @@ import cheshire_pkg::*;
   //   .rst_no       ( rst_n                    ),
   //   .init_no      (                          ) // keep open
   // );
+
+
+
+    //////////////////
+  // SPI Adaption //
+  //////////////////
+
+  // logic spi_sck_soc;
+  // logic [1:0] spi_cs_soc;
+  // logic [3:0] spi_sd_soc_out;
+  // logic [3:0] spi_sd_soc_in;
+
+  // logic spi_sck_en;
+  // logic [1:0] spi_cs_en;
+  // logic [3:0] spi_sd_en;
+
+  // // Assert reset low => Apply power to the SD Card
+  // // assign sd_reset_o       = 1'b0;
+
+  // // SCK  - SD CLK signal
+  // assign sd_sclk_o        = spi_sck_en    ? spi_sck_soc       : 1'b1;
+
+  // // CS   - SD DAT3 signal
+  // assign sd_d_io[3]       = spi_cs_en[0]  ? spi_cs_soc[0]     : 1'b1;
+
+  // // MOSI - SD CMD signal
+  // assign sd_cmd_o         = spi_sd_en[0]  ? spi_sd_soc_out[0] : 1'b1;
+
+  // // MISO - SD DAT0 signal
+  // assign spi_sd_soc_in[1] = sd_d_io[0];
+
+  // // SD DAT1 and DAT2 signal tie-off - Not used for SPI mode
+  // assign sd_d_io[2:1]     = 2'b11;
+
+  // // Bind input side of SoC low for output signals
+  // assign spi_sd_soc_in[0] = 1'b0;
+  // assign spi_sd_soc_in[2] = 1'b0;
+  // assign spi_sd_soc_in[3] = 1'b0;
 
 
   //////////////////

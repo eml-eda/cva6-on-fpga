@@ -1115,8 +1115,8 @@ set_property -dict {PACKAGE_PIN B21 IOSTANDARD LVCMOS33} [get_ports jtag_trst_i]
 ######################################################################
 # UART mapping
 ######################################################################
-# set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
-# set_property -dict {PACKAGE_PIN F13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
+set_property -dict {PACKAGE_PIN E13 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
+set_property -dict {PACKAGE_PIN F13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
 
 ######################################################################
 # System Clock mapping
@@ -1139,7 +1139,7 @@ set_property -dict {PACKAGE_PIN J11 IOSTANDARD LVCMOS33} [get_ports i2c_sda_io]
 ######################################################################
 # SDIO mapping
 ######################################################################
-# set_property -dict {PACKAGE_PIN j25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[0]]
+# set_property -dict {PACKAGE_PIN J25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[0]]
 # set_property -dict {PACKAGE_PIN L25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[1]]
 # set_property -dict {PACKAGE_PIN M25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[2]]
 # set_property -dict {PACKAGE_PIN K25 IOSTANDARD LVCMOS33} [get_ports sd_d_io[3]]
